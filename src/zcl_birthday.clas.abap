@@ -25,13 +25,31 @@ CLASS zcl_birthday IMPLEMENTATION.
       co_brothers_birthday TYPE d VALUE '20170521'.
 
 
-    DATA(my_age_in_days) = cl_abap_context_info=>get_system_date( ) - co_my_birthday.
-
+    "Our age in days ?
+    DATA(today) = cl_abap_context_info=>get_system_date( ).
+    DATA(my_age_in_days) = today - co_my_birthday.
+    DATA(my_brothers_age_in_days) = today - co_brothers_birthday.
     out->write( |I am { my_age_in_days } days old.| ).
-
-    DATA(my_brothers_age_in_days) = cl_abap_context_info=>get_system_date( ) - co_brothers_birthday.
-
     out->write( |My brother is { my_brothers_age_in_days } days old.| ).
+
+    "How many nights until surprise ?
+    DATA(my_birtyday_this_year) = CONV d( today(4) && co_my_birthday+4 ).
+    IF my_birtyday_this_year > today.
+      DATA(sleeps_until_birthday) = my_birtyday_this_year - today.
+    ELSE.
+      DATA(my_birtyday_next_year) = CONV d( |{ today(4) + 1 }{ co_my_birthday+4 }| ).
+      sleeps_until_birthday = my_birtyday_next_year - today.
+    ENDIF.
+    out->write( |I have to sleep { sleeps_until_birthday } nights until my next birthday.| ).
+
+    DATA(my_bros_birtyday_this_year) = CONV d( today(4) && co_brothers_birthday+4 ).
+    IF my_bros_birtyday_this_year > today.
+      sleeps_until_birthday = my_bros_birtyday_this_year - today.
+    ELSE.
+      my_bros_birtyday_this_year = CONV d( |{ today(4) + 1 }{ co_brothers_birthday+4 }| ).
+      sleeps_until_birthday = my_bros_birtyday_this_year - today.
+    ENDIF.
+    out->write( |My brother have to sleep { sleeps_until_birthday } nights until his next birthday.| ).
 
   ENDMETHOD.
 
