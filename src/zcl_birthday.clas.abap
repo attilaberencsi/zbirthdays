@@ -29,8 +29,12 @@ CLASS zcl_birthday IMPLEMENTATION.
     DATA(today) = cl_abap_context_info=>get_system_date( ).
     DATA(my_age_in_days) = today - co_my_birthday.
     DATA(my_brothers_age_in_days) = today - co_brothers_birthday.
-    out->write( |I am { my_age_in_days } days old.| ).
-    out->write( |My brother is { my_brothers_age_in_days } days old.| ).
+    MESSAGE ID 'ZBIRTHDAY' TYPE 'I' NUMBER 001 WITH my_age_in_days INTO DATA(msg).
+    out->write( |{ msg }| ).
+    "out->write( |I am { my_age_in_days } days old.| ).
+    MESSAGE ID 'ZBIRTHDAY' TYPE 'I' NUMBER 002 WITH my_brothers_age_in_days INTO msg.
+    out->write( |{ msg }| ).
+    "out->write( |My brother is { my_brothers_age_in_days } days old.| ).
 
     "How many nights until surprise ?
     DATA(my_birtyday_this_year) = CONV d( today(4) && co_my_birthday+4 ).
@@ -40,7 +44,9 @@ CLASS zcl_birthday IMPLEMENTATION.
       DATA(my_birtyday_next_year) = CONV d( |{ today(4) + 1 }{ co_my_birthday+4 }| ).
       sleeps_until_birthday = my_birtyday_next_year - today.
     ENDIF.
-    out->write( |I have to sleep { sleeps_until_birthday } nights until my next birthday.| ).
+    MESSAGE ID 'ZBIRTHDAY' TYPE 'I' NUMBER 003 WITH sleeps_until_birthday INTO msg.
+    out->write( |{ msg }| ).
+    "out->write( |I have to sleep { sleeps_until_birthday } nights until my next birthday.| ).
 
     DATA(my_bros_birtyday_this_year) = CONV d( today(4) && co_brothers_birthday+4 ).
     IF my_bros_birtyday_this_year > today.
@@ -49,7 +55,9 @@ CLASS zcl_birthday IMPLEMENTATION.
       my_bros_birtyday_this_year = CONV d( |{ today(4) + 1 }{ co_brothers_birthday+4 }| ).
       sleeps_until_birthday = my_bros_birtyday_this_year - today.
     ENDIF.
-    out->write( |My brother have to sleep { sleeps_until_birthday } nights until his next birthday.| ).
+    MESSAGE ID 'ZBIRTHDAY' TYPE 'I' NUMBER 004 WITH sleeps_until_birthday INTO msg.
+    out->write( |{ msg }| ).
+    "out->write( |My brother have to sleep { sleeps_until_birthday } nights until his next birthday.| ).
 
   ENDMETHOD.
 
